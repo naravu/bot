@@ -1,13 +1,13 @@
-# duckai_chat_code_bot.py
+# duckai_live_coding_bot.py
 # pip install streamlit ddgs
 
 import streamlit as st
 from ddgs import DDGS
 
-st.set_page_config(page_title="DuckAI Code Bot", page_icon="💻")
+st.set_page_config(page_title="DuckAI Live Coding Bot", page_icon="💻")
 
-st.title("💻 DuckAI Chat Code Bot")
-st.write("Ask me coding questions (Python, HTML, JavaScript, etc.) and I'll fetch helpful answers!")
+st.title("💻 DuckAI Live Coding Bot")
+st.write("Ask me coding questions (Python, HTML, JavaScript, etc.) and I'll fetch helpful answers. For Python, you can even run the code live!")
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -34,6 +34,9 @@ if st.button("Ask DuckAI"):
 
         # Build response with syntax highlighting
         response_text = ""
+        code_snippet = None
+        lang = None
+
         for r in results:
             title = r.get("title", "")
             url = r.get("href", "")
@@ -46,11 +49,11 @@ if st.button("Ask DuckAI"):
                 lang = "html"
             elif "function" in snippet or "console.log" in snippet:
                 lang = "javascript"
-            else:
-                lang = ""
 
             if lang:
                 response_text += f"**{title}**\n\n```{lang}\n{snippet}\n```\n[Read more]({url})\n\n---\n"
+                if lang == "python":
+                    code_snippet = snippet  # Save Python snippet for execution
             else:
                 response_text += f"**{title}**\n\n{snippet}\n\n[Read more]({url})\n\n---\n"
 
@@ -61,3 +64,18 @@ if st.button("Ask DuckAI"):
         st.session_state["messages"].append(("bot", response_text))
 
         st.rerun()
+
+# If last response contained Python code, allow execution
+if st.session_state["messages"]:
+    last_role, last_text = st.session_state["messages"][-1]
+    if last_role == "bot" and "```python" in last_text:
+        st.subheader("▶️ Run Python Code")
+        code_input = st.text_area("Edit or run the Python snippet:", value=last_text.split("```python")[1].split("```")[0])
+        if st.button("Execute"):
+            try:
+                exec_locals = {}
+                exec(code_input, {}, exec_locals)
+                st.success("Execution successful!")
+                st.write("Output variables:", exec_locals)
+            except Exception as e:
+                st.error(f"Error: {e}")

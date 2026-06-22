@@ -1,4 +1,4 @@
-# duckai_live_coding_bot_pro_ui_v2.py
+# duckai_live_coding_bot_pro_ui_v3.py
 # pip install streamlit ddgs
 
 import streamlit as st
@@ -17,23 +17,26 @@ st.markdown("""
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
-    color: #333333;
+    color: #ffffff;
+    background-color: #000000;
 }
 .chat-container {
     max-height: 500px;
     overflow-y: auto;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #444;
     border-radius: 8px;
-    background-color: #fdfdfd; /* distinct background */
+    background-color: #000000; /* black background */
+    color: #ffffff; /* white text */
 }
 .user-msg {
-    color: #0056b3;
+    color: #4da6ff; /* light blue for user */
     margin-bottom: 8px;
     font-weight: 500;
 }
 .bot-msg {
-    background: #e9ecef; /* softer gray for contrast */
+    background: #1c1c1c; /* dark gray for bot bubble */
+    color: #ffffff;
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 12px;

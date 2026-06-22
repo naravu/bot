@@ -1,19 +1,19 @@
-# duckai_live_code_bot.py
+# duckai_chat_code_bot.py
 # pip install streamlit ddgs
 
 import streamlit as st
 from ddgs import DDGS
 
-st.set_page_config(page_title="DuckAI Live Code Bot", page_icon="💻")
+st.set_page_config(page_title="DuckAI Code Bot", page_icon="💻")
 
-st.title("💻 DuckAI Live Code Bot")
-st.write("Ask me coding questions (Python, HTML, JavaScript, etc.) and I'll fetch helpful code snippets!")
+st.title("💻 DuckAI Chat Code Bot")
+st.write("Ask me coding questions (Python, HTML, JavaScript, etc.) and I'll fetch helpful answers!")
 
-# Chat history
+# Initialize chat history
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
-# Display chat
+# Display chat history
 for role, text in st.session_state["messages"]:
     if role == "user":
         st.markdown(f"**You:** {text}")
@@ -39,9 +39,18 @@ if st.button("Ask DuckAI"):
             url = r.get("href", "")
             snippet = r.get("body", "")
 
-            # Try to render snippet as code block
-            if "def " in snippet or "function" in snippet or "<" in snippet:
-                response_text += f"**{title}**\n\n```python\n{snippet}\n```\n[Read more]({url})\n\n---\n"
+            # Detect language for highlighting
+            if "def " in snippet or "import " in snippet:
+                lang = "python"
+            elif "<" in snippet and ">" in snippet:
+                lang = "html"
+            elif "function" in snippet or "console.log" in snippet:
+                lang = "javascript"
+            else:
+                lang = ""
+
+            if lang:
+                response_text += f"**{title}**\n\n```{lang}\n{snippet}\n```\n[Read more]({url})\n\n---\n"
             else:
                 response_text += f"**{title}**\n\n{snippet}\n\n[Read more]({url})\n\n---\n"
 

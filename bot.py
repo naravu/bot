@@ -1,4 +1,4 @@
-# duckai_live_coding_bot_pro_fixed.py
+# duckai_live_coding_bot_pro_ui.py
 # pip install streamlit ddgs
 
 import streamlit as st
@@ -11,6 +11,38 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- Custom CSS for professional look ---
+st.markdown("""
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+.chat-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+.user-msg {
+    color: #0056b3;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.bot-msg {
+    background: #f1f3f4;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # --- Sidebar ---
 st.sidebar.title("⚙️ Control Panel")
 view_mode = st.sidebar.radio("Choose View:", ["Chat", "Run Code", "Settings"])
@@ -22,10 +54,9 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
 # --- Fixed Search Bar ---
-st.markdown("### 🔍 Ask DuckAI")
-col1, col2 = st.columns([4,1])
+col1, col2 = st.columns([5,1])
 with col1:
-    query = st.text_input("Your coding question:", label_visibility="collapsed")
+    query = st.text_input("Your coding question:", label_visibility="collapsed", placeholder="Type your question here...")
 with col2:
     ask_button = st.button("Ask")
 
@@ -34,20 +65,13 @@ if view_mode == "Chat":
     st.subheader("💬 Conversation")
 
     # Scrollable results container
-    with st.container():
-        chat_area = st.container()
-        chat_area.markdown(
-            "<div style='max-height:400px;overflow-y:auto;padding:10px;border:1px solid #ddd;border-radius:8px;'>",
-            unsafe_allow_html=True
-        )
-
-        for role, text in st.session_state["messages"]:
-            if role == "user":
-                st.markdown(f"<div style='color:#1E90FF'><b>You:</b> {text}</div>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"<div style='background:#f9f9f9;padding:10px;border-radius:8px'><b>DuckAI:</b><br>{text}</div>", unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+    for role, text in st.session_state["messages"]:
+        if role == "user":
+            st.markdown(f"<div class='user-msg'>You: {text}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='bot-msg'><b>DuckAI:</b><br>{text}</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     # Handle query
     if ask_button and query.strip():

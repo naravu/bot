@@ -1,4 +1,4 @@
-# duckai_live_coding_bot_pro_ui.py
+# duckai_live_coding_bot_pro_ui_v2.py
 # pip install streamlit ddgs
 
 import streamlit as st
@@ -25,7 +25,7 @@ body {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #fafafa;
+    background-color: #fdfdfd; /* distinct background */
 }
 .user-msg {
     color: #0056b3;
@@ -33,7 +33,7 @@ body {
     font-weight: 500;
 }
 .bot-msg {
-    background: #f1f3f4;
+    background: #e9ecef; /* softer gray for contrast */
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 12px;
@@ -112,15 +112,28 @@ if view_mode == "Chat":
 # --- Run Code View ---
 elif view_mode == "Run Code":
     st.subheader("▶️ Run Python Code")
+
+    # Always show manual input box
+    manual_code = st.text_area("Write your own Python code:", height=200, placeholder="Enter Python code here...")
+    if st.button("Execute Manual Code"):
+        try:
+            exec_locals = {}
+            exec(manual_code, {}, exec_locals)
+            st.success("Execution successful!")
+            st.write("Output variables:", exec_locals)
+        except Exception as e:
+            st.error(f"Error: {e}")
+
+    # If last response contained Python code, show it too
     if st.session_state["messages"]:
         last_role, last_text = st.session_state["messages"][-1]
         if last_role == "bot" and "```python" in last_text:
             code_input = st.text_area(
-                "Edit or run the Python snippet:",
+                "Edit or run the Python snippet from DuckAI:",
                 value=last_text.split("```python")[1].split("```")[0],
                 height=200
             )
-            if st.button("Execute"):
+            if st.button("Execute Snippet"):
                 try:
                     exec_locals = {}
                     exec(code_input, {}, exec_locals)
@@ -128,8 +141,6 @@ elif view_mode == "Run Code":
                     st.write("Output variables:", exec_locals)
                 except Exception as e:
                     st.error(f"Error: {e}")
-        else:
-            st.info("No Python code available from the last response.")
 
 # --- Settings View ---
 elif view_mode == "Settings":

@@ -51,4 +51,4 @@ if st.button("Ask DuckAI"):
         # Save bot response
         st.session_state["messages"].append(("bot", response_text))
 
-        st.experimental_rerun()
+        st.rerun()
